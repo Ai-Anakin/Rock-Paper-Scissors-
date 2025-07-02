@@ -3,10 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script src="rps.js"></script>
+    <title>R-P-S Game</title>
+    <script src="rps.js" defer></script>
+    <link rel="stylesheet" href="style.css"></link>
 </head>
 <body>
-    
+    <div class="header">
+        <h1>Rock, Paper, Scissors</h1>
+    </div>
+    <div class="main-container">
+        <div class="human-choice">
+            <img class="human-image">
+        </div>
+        <div class="score-place"> 
+            <div class="score-text">Score:</div>
+            <div class="score-numbers">0 - 0</div>
+            <div class="result">Waiting for start...</div>
+        </div>
+        <div class="computer-choice">
+            <img src="clock.png" class="computer-image">
+        </div>
+    </div>
+    <div class="buttons-container">
+        <div class="player-buttons">
+            <button class="change-button">Change</button>
+        </div>
+        <div class="play-round-button">
+            <button class="play-round"><p>Play</p><img src="play.png" class="play-img"></button>
+        </div>
+        <div class="console-log"></div>
+    </div>
 </body>
 </html>
