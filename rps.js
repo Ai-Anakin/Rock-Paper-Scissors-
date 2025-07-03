@@ -7,75 +7,95 @@ const rules = {
 const imgChoices = ['rock', 'paper', 'scissors'];
 const humanChoice = document.querySelector('.human-choice img');
 let indexImg = 0;
+const changeButton = document.querySelector('.change-button');
+const playRoundButton= document.querySelector('.play-round');
+let humanPoint = 0;
+let computerPoint = 0;
+const maxPoints = 3; 
+const gameLog = document.querySelector('.game-log');
 
+
+//Функция и кнопка обновления картинки
 function updateImgChoice() {
     humanChoice.src = `${imgChoices[indexImg]}.png` ;
     humanChoice.alt = imgChoices[indexImg]; 
 }
-const changeButton = document.querySelector('.change-button');
 
 changeButton.addEventListener('click', () => {
     indexImg = (indexImg + 1 + imgChoices.length) % imgChoices.length;
     updateImgChoice();
 })
-
-const playRoundButton= document.querySelector('.play-round');
-
+//Запускает раунд
 playRoundButton.addEventListener('click', function(){
-    playGame();
+    playRps();
 })
 
+//Генерирует результат компьютера
 function getComputerChoice() {
     const choice = ['rock', 'paper', 'scissors'];
     return choice[Math.floor(Math.random() * 3)];
     }
-     
-function getHumanChoice () {
-    let choice;
-    do {
-        const input = prompt("Rock, Paper, Scissors?");
-        if (input === null) {
-            return null;
-        }
-        choice = input.toLowerCase();
-    }while (!['rock','paper','scissors'].includes(choice));
-    return choice;
+
+function changeComputerImage(choice){
+    const computerImage = document.querySelector('.computer-choice img');
+    computerImage.src = `${choice}.png`;
+    computerImage.alt = choice;
 }
+
+//Функция разыгрывающая партию на основе результата компьютера и alt картинки   
 function playRound(computerChoice, humanChoice) {
-    if (rules[humanChoice] === computerChoice) return "You Win";
-    if (rules[computerChoice] === humanChoice) return "You Lose";
+    if (rules[humanChoice] === computerChoice) return "You Lose";
+    if (rules[computerChoice] === humanChoice) return "You Win";
     return "Draw!";}
 
-
-function playGame() {
-    let currentR = 1;
-    let humanscore = 0;
-    let computerscore = 0;
-    while(humanscore < 3 && computerscore < 3){
-        let computerChoice = getComputerChoice();
-        let humanChoice = getHumanChoice();
-        let result = playRound(computerChoice,humanChoice);
-        if (humanChoice === null) {
-            console.log("Game cancelled")
-            return;
-        }
-        if (result === "You Win") {
-            humanscore++;
-            console.log(`Round ${currentR}`)
-            console.log(`You Win, your score ${humanscore}`)
-            currentR++
-        }else if (result === "You Lose"){
-            computerscore++;
-            console.log(`Round ${currentR}`)
-            console.log(`You lose, computer score ${computerscore}`)
-            currentR++
-        }else {
-            console.log("It's a tie")
-        }
-        }
-        if(computerscore === 3){
-            console.log(`Game is end, Computer Wins, Score: Computer ${computerscore}, Your score ${humanscore}`)
-        }else {
-            console.log(`Game is end, You Win, Score: Your score ${humanscore}, Computer ${computerscore}`)
-        }
+//обновляем счет   
+function updateScore(result){
+    const score = document.querySelector('.score-numbers');
+    if(result === "You Win"){
+        humanPoint++
+    }else if (result === "You Lose"){
+        computerPoint++
     }
+
+    score.textContent = `${humanPoint} - ${computerPoint}`
+}
+
+//написать проверку счета, если какойто счет то просто обнуляет счетчик и выводт результат
+function updateGame(){
+    const playButton = document.querySelector('.play-round');
+    if(humanPoint === maxPoints || computerPoint === maxPoints){
+        if(humanPoint === maxPoints){gameLog.textContent = "You Win"
+        }else if(computerPoint === maxPoints){gameLog.textContent = "Computer Wins"}
+        playButton.textContent = "Play Again";
+        playButton.id = "play-again";
+        playButton.replaceWith(playButton.cloneNode(true));
+        document.querySelector("#play-again").addEventListener('click', function(){resetScore()})
+    }
+
+}
+function resetScore(){
+    const score = document.querySelector('.score-numbers');
+    const resultText = document.querySelector('.result');
+    const playButton = document.querySelector('#play-again');
+    playButton.textContent = "Play";
+    playButton.id = "play";
+    playButton.replaceWith(playButton.cloneNode(true));
+    document.querySelector('#play').addEventListener('click', function(){playRps()})
+    humanPoint = 0;
+    computerPoint = 0;
+    score.textContent = `${humanPoint} - ${computerPoint}`;
+    resultText.textContent = "...";
+    gameLog.textContent = "🎮 First to 3 wins";
+        
+    }
+
+function playRps(){
+    const humanChoice = document.querySelector('.human-choice img').alt;
+    const computerChoice = getComputerChoice();
+    changeComputerImage(computerChoice);
+    const result = playRound(humanChoice, computerChoice);
+    const resultText = document.querySelector('.result');
+    resultText.textContent = result;
+    updateScore(result);
+    updateGame();
+}
